@@ -12,6 +12,7 @@ uvicorn = {extras = ["standard"], version = "^0.30.0"}
 pyjwt = "^2.8.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 sqlalchemy = "^2.0.30"
+pydantic = "^2.7.2"
 
 
 [tool.poetry.group.dev.dependencies]
