@@ -1,0 +1,7 @@
+__pycache__
+.venv
+.ruff_cache
+*.egg-info
+.nox
+.pytest_cache
+.mypy_cache
