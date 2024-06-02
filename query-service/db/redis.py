@@ -1,4 +1,5 @@
-import aioredis
-from core.config import settings
+import redis.asyncio as redis
+import os
 
-redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+REDIS_URL = os.environ.get('REDIS_URL')
+redis = redis.from_url(REDIS_URL, decode_responses=True)

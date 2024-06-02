@@ -1,21 +1,36 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from models.product import Product
 from schemas.product import ProductCreate, ProductUpdate
 from db.redis import redis
 import json
 
+
 async def create_product(db: AsyncSession, product_create: ProductCreate):
+    error = None
     product = product_create.dict()
     new_product = Product(**product)
-    db.add(new_product)
-    await db.commit()
-    await db.refresh(new_product)
+    try:
+        db.add(new_product)
+        await db.commit()
+        await db.refresh(new_product)
+    except IntegrityError:
+        error = True
+
+    if error:
+        raise HTTPException(
+            status_code=409,
+            detail="Product already exists."
+        )
     await redis.publish("product_updates", json.dumps({
         "status": "new",
-        **product
+        "data": {
+            **product
+        }
     }))
     return new_product
+
 
 async def update_product(
     db: AsyncSession,
@@ -29,13 +44,15 @@ async def update_product(
         setattr(product, key, value)
     await db.commit()
     await db.refresh(product)
-    print(f'AQUI {product_update.dict()}', flush=True)
     await redis.publish("product_updates", json.dumps({
         "status": "update",
-        "id": product_id,
-        **product_update.dict()
+        "data": {
+            "id": product_id,
+            **product_update.dict()
+        }
     }))
     return product
+
 
 async def delete_product(db: AsyncSession, product_id: str):
     product = await db.get(Product, product_id)
@@ -45,6 +62,8 @@ async def delete_product(db: AsyncSession, product_id: str):
     await db.commit()
     await redis.publish("product_updates", json.dumps({
         "status": "deleted",
-        "id": product_id
+        "data": {
+            "id": product_id
+        }
     }))
     return product

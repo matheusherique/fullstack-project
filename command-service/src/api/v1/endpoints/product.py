@@ -16,7 +16,9 @@ async def create_product_endpoint(
 
 @router.put("/{product_id}", response_model=ProductSchema)
 async def update_product_endpoint(
-    product_id: str, product: ProductUpdate, db: AsyncSession = Depends(get_session)
+    product_id: str,
+    product: ProductUpdate,
+    db: AsyncSession = Depends(get_session)
 ):
     return await update_product(db, product_id, product)
 
