@@ -1,0 +1,58 @@
+services:
+  auth-service:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./auth-service:/app
+    depends_on:
+      - db
+
+  command-service:
+    build:
+      context: .
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./command-service:/app
+    depends_on:
+      - db
+
+  query-service:
+    build:
+      context: .
+    ports:
+      - "8002:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./query-service:/app
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth-service
+      - command-service
+      - query-service
+
+  db:
+    image: postgres:14.2-alpine
+    env_file:
+     - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
