@@ -37,7 +37,7 @@ def do_run_migrations(connection):
 async def run_migrations_online():
     """Run migrations in 'online' mode."""
     configuration = config.get_section(config.config_ini_section)
-    configuration["sqlalchemy.url"] = os.environ.get('COMMAND_DATABASE_URL')
+    configuration["sqlalchemy.url"] = os.environ.get('QUERY_DATABASE_URL')
     connectable = AsyncEngine(
         engine_from_config(
             configuration,

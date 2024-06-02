@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.session import get_session
 from schemas.product import ProductCreate, ProductUpdate, ProductSchema
@@ -16,13 +16,13 @@ async def create_product_endpoint(
 
 @router.put("/{product_id}", response_model=ProductSchema)
 async def update_product_endpoint(
-    product_id: int, product: ProductUpdate, db: AsyncSession = Depends(get_session)
+    product_id: str, product: ProductUpdate, db: AsyncSession = Depends(get_session)
 ):
     return await update_product(db, product_id, product)
 
 
 @router.delete("/{product_id}", response_model=ProductSchema)
 async def delete_product_endpoint(
-    product_id: int, db: AsyncSession = Depends(get_session)
+    product_id: str, db: AsyncSession = Depends(get_session)
 ):
     return await delete_product(db, product_id)

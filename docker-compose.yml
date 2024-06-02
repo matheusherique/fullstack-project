@@ -9,7 +9,7 @@ services:
     volumes:
       - ./auth-service:/app
     depends_on:
-      - db
+      - db-command
 
   command-service:
     build:
@@ -21,7 +21,8 @@ services:
     volumes:
       - ./command-service:/app
     depends_on:
-      - db
+      - db-command
+      - redis
 
   query-service:
     build:
@@ -33,7 +34,8 @@ services:
     volumes:
       - ./query-service:/app
     depends_on:
-      - db
+      - db-query
+      - redis
 
   frontend:
     build:
@@ -45,14 +47,29 @@ services:
       - command-service
       - query-service
 
-  db:
+  db-command:
     image: postgres:14.2-alpine
     env_file:
      - .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres-command-data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
 
+  db-query:
+    image: postgres:14.2-alpine
+    env_file:
+     - .env
+    volumes:
+      - postgres-query-data:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7.2.5-alpine
+    ports:
+      - "6379:6379"
+
 volumes:
-  postgres_data:
+  postgres-command-data:
+  postgres-query-data:

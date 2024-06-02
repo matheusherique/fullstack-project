@@ -11,7 +11,7 @@ fastapi = "^0.111.0"
 uvicorn = {extras = ["standard"], version = "^0.30.0"}
 pyjwt = "^2.8.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-sqlalchemy = "^2.0.30"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.30"}
 pydantic = "^2.7.2"
 alembic = "^1.13.1"
 pydantic-settings = "^2.2.1"
@@ -37,4 +37,8 @@ in-project = true
 
 [tool.ruff.lint]
 select = ["C", "E", "F", "W", "B"]
-ignore = ["E203", "E501"]
+ignore = ["E203", "E501", "B008"]
+exclude = [
+    "*/tests",
+    "*_migration.py"
+]
