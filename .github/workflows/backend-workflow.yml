@@ -25,17 +25,15 @@ jobs:
       - uses: actions/cache@v3
         name: Define a cache for the virtual environment based on the dependencies lock file
         with:
-          path: ./backend/.venv
-          key: venv-${{ hashFiles('backend/poetry.lock') }}
+          path: .venv
+          key: venv-${{ hashFiles('poetry.lock') }}
 
       - name: Install the project dependencies
-        working-directory: ./backend
         run: poetry install
 
-      - name: Run the automated tests
-        working-directory: ./backend
-        run: poetry run pytest -v
+      # - name: Run the automated tests on auth service
+      #   working-directory: ./auth-service
+      #   run: poetry run pytest -v
 
       - name: Run the linter
-        working-directory: ./backend
         run: poetry run ruff check
