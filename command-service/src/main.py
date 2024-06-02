@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .api.v1.endpoints import product
 from db.base import Base
 from db.session import engine
+from db.redis import redis
 
 
 app = FastAPI()
@@ -15,6 +16,7 @@ app.include_router(
 
 @app.on_event("startup")
 async def startup():
+    await redis.initialize()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
@@ -22,7 +24,7 @@ async def startup():
 
 @app.on_event("shutdown")
 async def shutdown():
-    pass
+    await redis.close()
 
 app.add_middleware(
     CORSMiddleware,
